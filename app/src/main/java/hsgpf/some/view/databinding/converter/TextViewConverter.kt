@@ -5,6 +5,7 @@ import androidx.databinding.BindingAdapter
 
 object TextViewConverter {
 
+   @JvmStatic
    @BindingAdapter("android:text")
    fun setAsStringFromLong(textView: TextView, value: Long) {
       val newValue = value.toString()

@@ -58,7 +58,7 @@ class GithubRemoteDataSTest {
          mockServerResponse(HttpStatusEnum.OK, bodyResponse = Gson().toJson(bodyResponse), headers)
       )
       val result = githubRemoteDataS.searchRepositoriesByLanguage(
-         query = "q=language:kotlin", sort = "stars", order = "desc", page = 1, resultsPerPage = 15
+         query = "language:kotlin", sort = "stars", order = "desc", page = 1, resultsPerPage = 15
       )
       assertSuccessfulSearchResult(bodyResponse, result)
    }
@@ -71,7 +71,7 @@ class GithubRemoteDataSTest {
    private fun prepareHeadersForSearch() = Headers.headersOf(
       "link",
       "<https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars&page=2" +
-      "&order=asc>;" +
+      "&order=asc>; " +
       "rel=\"next\",<https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars" +
       "&page=34&order=asc>;" +
       "rel=\"last\""
@@ -100,7 +100,7 @@ class GithubRemoteDataSTest {
       )
 
       val result = githubRemoteDataS.searchRepositoriesByLanguage(
-         query = "q=language:kotlin", sort = "stars", order = "desc", page = 1,
+         query = "language:kotlin", sort = "stars", order = "desc", page = 1,
          resultsPerPage = 15
       )
       assertThat(result.exception is GithubExceptions, `is`(true))
@@ -116,7 +116,7 @@ class GithubRemoteDataSTest {
       )
 
       val result = githubRemoteDataS.searchRepositoriesByLanguage(
-         query = "q=language:kotlin", sort = "stars", order = "desc", page = 1,
+         query = "language:kotlin", sort = "stars", order = "desc", page = 1,
          resultsPerPage = 15
       )
       assertNotNull(result.exception)

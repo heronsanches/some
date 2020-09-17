@@ -11,7 +11,7 @@
 
    <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
+      android:layout_height="wrap_content"
       android:layout_marginTop="@dimen/margin_default"
       android:layout_marginBottom="@dimen/margin_default">
 
@@ -20,7 +20,6 @@
          android:layout_width="0dp"
          android:layout_height="0dp"
          android:contentDescription="@string/ctt_description_repositoryOwner"
-         android:scaleType="centerCrop"
          app:imageUrl="@{repository.owner.avatarUrl}"
          app:layout_constraintBottom_toBottomOf="@+id/brSideText"
          app:layout_constraintEnd_toStartOf="@+id/tvRepositoryName"
@@ -40,7 +39,10 @@
          android:id="@+id/tvRepositoryName"
          android:layout_width="0dp"
          android:layout_height="wrap_content"
+         android:layout_marginStart="@dimen/margin_small"
+         android:layout_marginEnd="@dimen/margin_small"
          android:text="@{repository.name}"
+         android:textStyle="bold"
          app:layout_constraintEnd_toEndOf="parent"
          app:layout_constraintHorizontal_weight="4"
          app:layout_constraintStart_toEndOf="@+id/ivRepositoryOwner"
@@ -56,6 +58,7 @@
          android:gravity="center_vertical|start"
          android:text="@{repository.stargazersCount}"
          app:drawableStartCompat="@drawable/ic_star"
+         app:drawableTint="@color/colorGray900"
          app:layout_constraintEnd_toEndOf="@+id/tvRepositoryName"
          app:layout_constraintStart_toStartOf="@+id/tvRepositoryName"
          app:layout_constraintTop_toBottomOf="@+id/tvRepositoryName"
@@ -69,17 +72,21 @@
          android:drawablePadding="@dimen/padding_small"
          android:text="@{repository.forksCount}"
          app:drawableStartCompat="@drawable/ic_account_tree"
+         app:drawableTint="@color/colorGray900"
+         app:layout_constraintEnd_toEndOf="@+id/tvRepositoryName"
          app:layout_constraintStart_toStartOf="@+id/tvRepositoryName"
          app:layout_constraintTop_toBottomOf="@+id/tvStars"
-         tools:text="3123 forks" />
+         tools:text="3123" />
 
       <TextView
          android:id="@+id/tvOwnerName"
-         android:layout_width="match_parent"
+         android:layout_width="0dp"
          android:layout_height="wrap_content"
          android:layout_marginTop="@dimen/margin_small"
-         android:gravity="center_vertical"
+         android:gravity="center"
          android:text="@{repository.owner.login}"
+         app:layout_constraintEnd_toEndOf="@id/ivRepositoryOwner"
+         app:layout_constraintStart_toStartOf="@id/ivRepositoryOwner"
          app:layout_constraintTop_toBottomOf="@+id/brSideText"
          tools:text="Owner name" />
    </androidx.constraintlayout.widget.ConstraintLayout>

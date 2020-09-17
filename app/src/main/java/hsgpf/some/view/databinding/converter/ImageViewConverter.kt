@@ -7,6 +7,7 @@ import hsgpf.some.R
 
 object ImageViewConverter {
 
+   @JvmStatic
    @BindingAdapter("imageUrl")
    fun setAsDrawableFromString(imageView: ImageView, url: String) {
       if (url.isNotBlank()) Glide.with(imageView.context).load(url).into(imageView)

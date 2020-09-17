@@ -1,6 +1,5 @@
 package hsgpf.some.utils.enums
 
-// TODO: only use the codes treated by the app
 enum class HttpStatusEnum(val code: Int, val description: String) {
    OK(200, "OK"), CREATED(201, "Created"), PERMANENT_REDIRECTED(308, "Permanent Redirect"),
    BAD_REQUEST(400, "Bad Request"), UNAUTHORIZED(401, "Unauthorized"),

@@ -20,7 +20,7 @@ class GithubTopKotlinProjectsViewModel(
    fun searchRepositoriesInitialPage() {
       launch {
          repositories.value = withContext(dispatcher) {
-            githubRemoteRepository.searchRepositories("q=language:kotlin", "stars", "desc", 1, 15)
+            githubRemoteRepository.searchRepositories("language:kotlin", "stars", "desc", 1, 15)
          }
       }
    }

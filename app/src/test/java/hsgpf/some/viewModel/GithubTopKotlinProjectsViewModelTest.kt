@@ -38,7 +38,7 @@ class GithubTopKotlinProjectsViewModelTest {
 
       // must has a non null [GithubRepositoriesData] value
       val expected = GithubRepositoriesData()
-      `when`(githubRemoteRepository.searchRepositories("q=language:kotlin", "stars", "desc", 1, 15))
+      `when`(githubRemoteRepository.searchRepositories("language:kotlin", "stars", "desc", 1, 15))
          .thenReturn(expected)
       githubTopKotlinProjectsViewModel.searchRepositoriesInitialPage()
       assertThat(githubTopKotlinProjectsViewModel.repositories().getOrAwaitValue(), `is`(expected))

@@ -27,9 +27,11 @@ class GithubRemoteDataS(private val githubAPI: GithubAPI) : GithubRemoteDataSour
       processResponse: ResponseData<GithubRepositoriesData>
    ): GithubRepositoriesData {
       return processResponse.headers["link"]?.run {
-         val linkProcessing = split(""">;rel="next",""")
+         val linkProcessing = split(Regex(">;\\s*rel=\"next\","))
          val nextPage = removeFirstCharacter(linkProcessing[0])
-         val lastPage = removeFirstCharacter(linkProcessing[1].split(""">;rel="last"""")[0])
+
+         val lastPage =
+            removeFirstCharacter(linkProcessing[1].split(Regex(">;\\s*rel=\"last\""))[0])
 
          val repositories = processResponse.payload?.apply {
             nextPageLink = nextPage
