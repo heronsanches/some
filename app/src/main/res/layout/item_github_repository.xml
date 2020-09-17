@@ -1,0 +1,86 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+   xmlns:tools="http://schemas.android.com/tools">
+
+   <data>
+
+      <variable
+         name="repository"
+         type="hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoryData" />
+   </data>
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="@dimen/margin_default"
+      android:layout_marginBottom="@dimen/margin_default">
+
+      <ImageView
+         android:id="@+id/ivRepositoryOwner"
+         android:layout_width="0dp"
+         android:layout_height="0dp"
+         android:contentDescription="@string/ctt_description_repositoryOwner"
+         android:scaleType="centerCrop"
+         app:imageUrl="@{repository.owner.avatarUrl}"
+         app:layout_constraintBottom_toBottomOf="@+id/brSideText"
+         app:layout_constraintEnd_toStartOf="@+id/tvRepositoryName"
+         app:layout_constraintHorizontal_weight="1.5"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toTopOf="parent"
+         tools:srcCompat="@drawable/ic_no_image" />
+
+      <androidx.constraintlayout.widget.Barrier
+         android:id="@+id/brSideText"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         app:barrierDirection="bottom"
+         app:constraint_referenced_ids="tvForks,tvRepositoryName,tvStars" />
+
+      <TextView
+         android:id="@+id/tvRepositoryName"
+         android:layout_width="0dp"
+         android:layout_height="wrap_content"
+         android:text="@{repository.name}"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintHorizontal_weight="4"
+         app:layout_constraintStart_toEndOf="@+id/ivRepositoryOwner"
+         app:layout_constraintTop_toTopOf="parent"
+         tools:text="Repository name" />
+
+      <TextView
+         android:id="@+id/tvStars"
+         android:layout_width="0dp"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="@dimen/margin_small"
+         android:drawablePadding="@dimen/padding_small"
+         android:gravity="center_vertical|start"
+         android:text="@{repository.stargazersCount}"
+         app:drawableStartCompat="@drawable/ic_star"
+         app:layout_constraintEnd_toEndOf="@+id/tvRepositoryName"
+         app:layout_constraintStart_toStartOf="@+id/tvRepositoryName"
+         app:layout_constraintTop_toBottomOf="@+id/tvRepositoryName"
+         tools:text="72878" />
+
+      <TextView
+         android:id="@+id/tvForks"
+         android:layout_width="0dp"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="@dimen/margin_small"
+         android:drawablePadding="@dimen/padding_small"
+         android:text="@{repository.forksCount}"
+         app:drawableStartCompat="@drawable/ic_account_tree"
+         app:layout_constraintStart_toStartOf="@+id/tvRepositoryName"
+         app:layout_constraintTop_toBottomOf="@+id/tvStars"
+         tools:text="3123 forks" />
+
+      <TextView
+         android:id="@+id/tvOwnerName"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_marginTop="@dimen/margin_small"
+         android:gravity="center_vertical"
+         android:text="@{repository.owner.login}"
+         app:layout_constraintTop_toBottomOf="@+id/brSideText"
+         tools:text="Owner name" />
+   </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

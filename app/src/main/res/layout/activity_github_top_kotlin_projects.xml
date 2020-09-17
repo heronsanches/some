@@ -1,0 +1,34 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+   xmlns:app="http://schemas.android.com/apk/res-auto"
+   xmlns:tools="http://schemas.android.com/tools">
+
+   <androidx.constraintlayout.widget.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      tools:context=".view.activity.GithubTopKotlinProjectsActivity">
+
+      <com.google.android.material.appbar.AppBarLayout
+         android:id="@+id/ablToolbar"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         app:elevation="@dimen/appbarlayout_elevation"
+         app:layout_constraintTop_toTopOf="parent">
+
+         <include layout="@layout/toolbar" />
+      </com.google.android.material.appbar.AppBarLayout>
+
+      <androidx.recyclerview.widget.RecyclerView
+         android:id="@+id/rvRepositories"
+         android:layout_width="match_parent"
+         android:layout_height="0dp"
+         android:overScrollMode="never"
+         android:paddingStart="@dimen/padding_small"
+         android:paddingTop="@dimen/padding_default"
+         android:paddingEnd="@dimen/padding_small"
+         android:paddingBottom="@dimen/padding_default"
+         app:layout_constraintBottom_toBottomOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/ablToolbar"
+         tools:itemCount="2"
+         tools:listitem="@layout/item_github_repository" />
+   </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

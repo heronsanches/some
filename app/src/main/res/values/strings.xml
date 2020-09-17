@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name" translatable="false">some</string>
+
+    <string name="ctt_description_repositoryOwner">Image miniature from the repository owner.</string>
+</resources>
