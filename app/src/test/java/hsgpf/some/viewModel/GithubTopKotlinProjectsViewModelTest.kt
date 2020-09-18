@@ -35,7 +35,7 @@ class GithubTopKotlinProjectsViewModelTest {
    @Test
    fun searchRepositories() = runBlockingTest {
       checkInitialLiveDataValues()
-      val expected = GithubRepositoriesData()
+      val expected = GithubRepositoriesData(actualPage = 2, nextPage = 3)
 
       `when`(githubRemoteRepository.searchRepositories("language:kotlin", "stars", "desc", 1, 15))
          .thenReturn(expected)
@@ -58,5 +58,7 @@ class GithubTopKotlinProjectsViewModelTest {
       mainTestCoroutineDispatcherRule.pause()
       assertNull(githubTopKotlinProjectsViewModel.repositories().value)
       assertNull(githubTopKotlinProjectsViewModel.loadingRepositories().value)
+      assertThat(githubTopKotlinProjectsViewModel.actualPage, `is`(1))
+      assertThat(githubTopKotlinProjectsViewModel.nextPage, `is`(1))
    }
 }

@@ -16,6 +16,9 @@ class GithubTopKotlinProjectsViewModel(
 ) : BaseViewModel() {
    private val repositories = MutableLiveData<GithubRepositoriesData>()
    private val loadingRepositories = MutableLiveData<Boolean>()
+   var onSavedInstance = false
+   var nextPage = 1
+   var actualPage = 1
 
    fun repositories(): LiveData<GithubRepositoriesData> = repositories
    fun loadingRepositories(): LiveData<Boolean> = loadingRepositories

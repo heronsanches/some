@@ -13,9 +13,7 @@ import org.koin.core.parameter.parametersOf
 
 class GithubTopKotlinProjectsActivity : AppCompatActivity() {
    private val helper: GithubTopKotlinProjectsActivityHelper by inject { parametersOf(this) }
-   val githubTopKotlinProjectsViewModel: GithubTopKotlinProjectsViewModel by viewModel()
-   val SAVED_NEXT_PAGE = "SAVED_NEXT_PAGE"
-   val SAVED_ACTUAL_PAGE = "SAVED_ACTUAL_PAGE"
+   val githubViewModel: GithubTopKotlinProjectsViewModel by viewModel()
 
    val binding: ActivityGithubTopKotlinProjectsBinding by lazy {
       DataBindingUtil.setContentView(this, R.layout.activity_github_top_kotlin_projects)
@@ -24,12 +22,11 @@ class GithubTopKotlinProjectsActivity : AppCompatActivity() {
    override fun onCreate(savedInstanceState: Bundle?) {
       super.onCreate(savedInstanceState)
       helper.initializeToolbar()
-      helper.setupGithubTopKotlinProjectsList(savedInstanceState)
+      helper.setupGithubTopKotlinProjectsList()
    }
 
    override fun onSaveInstanceState(outState: Bundle) {
-      outState.putInt(SAVED_NEXT_PAGE, helper.nextPage)
-      outState.putInt(SAVED_ACTUAL_PAGE, helper.actualPage)
+      githubViewModel.onSavedInstance = true
       super.onSaveInstanceState(outState)
    }
 }

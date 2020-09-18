@@ -1,6 +1,5 @@
 package hsgpf.some.view.activity.helper
 
-import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -16,13 +15,6 @@ class GithubTopKotlinProjectsActivityHelper(
 ) {
    private lateinit var githubTopKotlinProjectsAdapter: GithubTopKotlinProjectsAdapter
    private lateinit var linearLayoutManager: LinearLayoutManager
-
-   var nextPage: Int = 1
-      private set
-
-   var actualPage: Int = 1
-      private set
-
    private var scrollingUp = false
 
    fun initializeToolbar() {
@@ -31,13 +23,9 @@ class GithubTopKotlinProjectsActivityHelper(
       }
    }
 
-   fun setupGithubTopKotlinProjectsList(savedInstanceState: Bundle?) {
+   fun setupGithubTopKotlinProjectsList() {
 
       act.get()?.run {
-         savedInstanceState?.run {
-            nextPage = savedInstanceState.getInt(SAVED_NEXT_PAGE, 1)
-            actualPage = savedInstanceState.getInt(SAVED_ACTUAL_PAGE, 1)
-         }
          linearLayoutManager = LinearLayoutManager(this)
          githubTopKotlinProjectsAdapter = GithubTopKotlinProjectsAdapter()
          binding.rvRepositories.layoutManager = linearLayoutManager
@@ -46,14 +34,14 @@ class GithubTopKotlinProjectsActivityHelper(
          repositoriesObserver()
          loadingRepositoriesObserver()
 
-         if (githubTopKotlinProjectsViewModel.repositories().value == null)
-            githubTopKotlinProjectsViewModel.searchRepositories(actualPage)
+         if (githubViewModel.repositories().value == null)
+            githubViewModel.searchRepositories(1)
       }
    }
 
    private fun loadingRepositoriesObserver() {
       act.get()?.run {
-         githubTopKotlinProjectsViewModel.loadingRepositories().observe(this, { isLoading ->
+         githubViewModel.loadingRepositories().observe(this, { isLoading ->
             binding.pb.isVisible = isLoading
          })
       }
@@ -63,16 +51,16 @@ class GithubTopKotlinProjectsActivityHelper(
 
       override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
          act.get()?.run {
-            if (newState == RecyclerView.SCROLL_STATE_SETTLING) {
+            if (newState == RecyclerView.SCROLL_STATE_IDLE) {
                val hasItemsDown = recyclerView.canScrollVertically(1)
                val hasItemsUp = recyclerView.canScrollVertically(-1)
 
                if (!hasItemsDown) {
                   scrollingUp = false
-                  githubTopKotlinProjectsViewModel.searchRepositories(nextPage)
-               } else if (!hasItemsUp && actualPage > 1) {
+                  githubViewModel.searchRepositories(githubViewModel.nextPage)
+               } else if (!hasItemsUp && githubViewModel.actualPage > 1) {
                   scrollingUp = true
-                  githubTopKotlinProjectsViewModel.searchRepositories(actualPage - 1)
+                  githubViewModel.searchRepositories(githubViewModel.actualPage - 1)
                }
             }
          }
@@ -81,25 +69,32 @@ class GithubTopKotlinProjectsActivityHelper(
 
    private fun repositoriesObserver() {
       act.get()?.run {
-         githubTopKotlinProjectsViewModel.repositories().observe(this, { repositories ->
-            actualPage = repositories.actualPage
-            nextPage = repositories.nextPage
+         githubViewModel.repositories().observe(this, { repositories ->
             val infiniteList = mutableListOf<GithubRepositoryData>()
 
             if (scrollingUp) defineScrollUpInfiniteList(repositories, infiniteList)
             else {
-               if (actualPage > 1) defineScrollDownInfiniteList(repositories, infiniteList)
-               else infiniteList.addAll(repositories.items)
+               if (githubViewModel.actualPage > 1 && !githubViewModel.onSavedInstance)
+                  defineScrollDownInfiniteList(repositories, infiniteList)
+               else { // activity recreated
+                  infiniteList.addAll(repositories.items)
+               }
             }
+            githubViewModel.nextPage = repositories.nextPage
+            githubViewModel.actualPage = repositories.actualPage
+            githubViewModel.onSavedInstance = false
             githubTopKotlinProjectsAdapter.submitList(infiniteList)
          })
       }
    }
 
    private fun addVisibleItems(infiniteList: MutableList<GithubRepositoryData>) {
-      val startIndex = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
-      val endIndex = linearLayoutManager.findLastCompletelyVisibleItemPosition() + 1
-      infiniteList.addAll(githubTopKotlinProjectsAdapter.currentList.subList(startIndex, endIndex))
+      val startIndex = linearLayoutManager.findFirstVisibleItemPosition()
+      val endIndex = linearLayoutManager.findLastVisibleItemPosition() + 1
+
+      infiniteList.addAll(
+         githubTopKotlinProjectsAdapter.currentList.subList(startIndex, endIndex)
+      )
    }
 
    private fun defineScrollUpInfiniteList(repositories: GithubRepositoriesData,
