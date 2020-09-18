@@ -33,23 +33,14 @@ class GithubTopKotlinProjectsViewModelTest {
    }
 
    @Test
-   fun searchRepositoriesInitialPage() = runBlockingTest {
+   fun searchRepositories() = runBlockingTest {
       checkInitialLiveDataValues()
 
       // must has a non null [GithubRepositoriesData] value
       val expected = GithubRepositoriesData()
       `when`(githubRemoteRepository.searchRepositories("language:kotlin", "stars", "desc", 1, 15))
          .thenReturn(expected)
-      githubTopKotlinProjectsViewModel.searchRepositoriesInitialPage()
-      assertThat(githubTopKotlinProjectsViewModel.repositories().getOrAwaitValue(), `is`(expected))
-   }
-
-   @Test
-   fun searchRepositoriesByUrl() {
-      checkInitialLiveDataValues()
-      val expected = GithubRepositoriesData()
-      `when`(githubRemoteRepository.searchRepositoriesByUrl("")).thenReturn(expected)
-      githubTopKotlinProjectsViewModel.searchRepositoriesByUrl("")
+      githubTopKotlinProjectsViewModel.searchRepositories(1)
       assertThat(githubTopKotlinProjectsViewModel.repositories().getOrAwaitValue(), `is`(expected))
    }
 

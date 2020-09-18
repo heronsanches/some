@@ -2,6 +2,7 @@ package hsgpf.some.viewModel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import hsgpf.some.model.datasource.remote.retrofit.api.PAGINATION_SIZE
 import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoriesData
 import hsgpf.some.model.repository.remote.github.GithubRemoteRepository
 import kotlinx.coroutines.CoroutineDispatcher
@@ -17,18 +18,12 @@ class GithubTopKotlinProjectsViewModel(
 
    fun repositories(): LiveData<GithubRepositoriesData> = repositories
 
-   fun searchRepositoriesInitialPage() {
+   fun searchRepositories(page: Int) {
       launch {
          repositories.value = withContext(dispatcher) {
-            githubRemoteRepository.searchRepositories("language:kotlin", "stars", "desc", 1, 15)
-         }
-      }
-   }
-
-   fun searchRepositoriesByUrl(url: String) {
-      launch {
-         repositories.value = withContext(dispatcher) {
-            githubRemoteRepository.searchRepositoriesByUrl(url)
+            githubRemoteRepository.searchRepositories(
+               "language:kotlin", "stars", "desc", page, PAGINATION_SIZE
+            )
          }
       }
    }

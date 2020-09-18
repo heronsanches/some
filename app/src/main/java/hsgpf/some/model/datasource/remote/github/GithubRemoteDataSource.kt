@@ -7,6 +7,4 @@ interface GithubRemoteDataSource {
    fun searchRepositoriesByLanguage(
       query: String, sort: String, order: String, page: Int, resultsPerPage: Int
    ): GithubRepositoriesData
-
-   fun searchRepositoriesByUrl(url: String): GithubRepositoriesData
 }

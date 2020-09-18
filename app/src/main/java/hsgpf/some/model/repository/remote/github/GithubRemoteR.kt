@@ -13,8 +13,4 @@ class GithubRemoteR(private val githubRemoteDataSource: GithubRemoteDataSource)
          query, sort, order, page, resultsPerPage
       )
    }
-
-   override fun searchRepositoriesByUrl(url: String): GithubRepositoriesData {
-      return githubRemoteDataSource.searchRepositoriesByUrl(url)
-   }
 }

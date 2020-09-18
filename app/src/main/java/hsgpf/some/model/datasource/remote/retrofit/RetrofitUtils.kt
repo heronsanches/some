@@ -1,6 +1,5 @@
 package hsgpf.some.model.datasource.remote.retrofit
 
-import android.app.Application
 import com.google.gson.GsonBuilder
 import hsgpf.some.BuildConfig
 import hsgpf.some.model.datasource.remote.retrofit.data.ResponseData
@@ -9,7 +8,6 @@ import okhttp3.Cache
 import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Converter
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -27,42 +25,38 @@ private class CacheInterceptor(private val cacheMaxAge: Int) : Interceptor {
    }
 }
 
-// TODO: create a Data for retrofit factory parameters
-/** It creates a Retrofit API based on parameters passed. By definition it always is going to
- * add these following converters, in this exaclty order: [ScalarsConverterFactory] and
- * [GsonConverterFactory]. If you want to add some other converters pass it throw
- * [converterFactory] parameter, so these converters will take precedence from the others.
- * The [loggingLevel] is only applied on [BuildConfig.BUILD_TYPE] different from "release".
- * The [baseUrl] parameter must end with "/".*/
-fun <T> retrofitApiFactory(
-   baseUrl: String, vararg converterFactory: Converter.Factory = arrayOf(), clazz: Class<T>,
-   loggingLevel: HttpLoggingInterceptor.Level = HttpLoggingInterceptor.Level.BODY,
-   readTimeout: Long = 15L, writeTimeout: Long = 15L, application: Application,
-   cacheSizeInBytes: Long = 0, cacheName: String = "", cacheMaxAgeInSeconds: Int = 0
-): T {
+/** It creates a Retrofit API based on parameters passed, the parameters are passed by
+ *  [RetrofitUtilsData]. By definition it always is going to add these following converters,
+ *  in this exactly order: [ScalarsConverterFactory] and [GsonConverterFactory].
+ *  If you want to add some other converters pass it throw [RetrofitUtilsData.converterFactory]
+ *  parameter, so these converters will take precedence from the others.
+ *  The [RetrofitUtilsData.loggingLevel] is only applied on [BuildConfig.BUILD_TYPE] different
+ *  from "release". The [RetrofitUtilsData.baseUrl] parameter must end with "/".*/
+fun <T> retrofitApiFactory(data: RetrofitUtilsData<T>): T {
    val logging =
-      if (BuildConfig.BUILD_TYPE != "release") HttpLoggingInterceptor().setLevel(loggingLevel)
+      if (BuildConfig.BUILD_TYPE != "release") HttpLoggingInterceptor().setLevel(data.loggingLevel)
       else null
 
    val cache =
-      if (cacheSizeInBytes > 0) Cache(File(application.cacheDir, cacheName), cacheSizeInBytes)
+      if (data.cacheSizeInBytes > 0)
+         Cache(File(data.application.cacheDir, data.cacheName), data.cacheSizeInBytes)
       else null
 
    val okHttpClient = OkHttpClient.Builder().apply {
-      readTimeout(readTimeout, TimeUnit.SECONDS)
-      writeTimeout(writeTimeout, TimeUnit.SECONDS)
+      readTimeout(data.readTimeout, TimeUnit.SECONDS)
+      writeTimeout(data.writeTimeout, TimeUnit.SECONDS)
       cache?.let { this.cache(cache) }
       logging?.run { addInterceptor(this) }
-      cache?.let { addNetworkInterceptor(CacheInterceptor(cacheMaxAgeInSeconds)) }
+      cache?.let { addNetworkInterceptor(CacheInterceptor(data.cacheMaxAgeInSeconds)) }
    }.build()
 
    return Retrofit.Builder().apply {
-      baseUrl(baseUrl)
-      converterFactory.forEach { addConverterFactory(it) }
+      baseUrl(data.baseUrl)
+      data.converterFactory.forEach { addConverterFactory(it) }
       addConverterFactory(ScalarsConverterFactory.create())
       addConverterFactory(GsonConverterFactory.create(gsonDefault()))
       client(okHttpClient)
-   }.build().create(clazz)
+   }.build().create(data.clazz)
 }
 
 /** It transform the retrofit [Response] into a [ResponseData]. */

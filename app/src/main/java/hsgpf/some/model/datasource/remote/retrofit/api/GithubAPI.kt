@@ -5,9 +5,10 @@ import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
-import retrofit2.http.Url
 
 val BASE_URL_GITHUB_API = "https://api.github.com/"
+val CACHE_NAME_GITHUB_API = "http_github_projects"
+val PAGINATION_SIZE = 15
 
 interface GithubAPI {
 
@@ -20,8 +21,4 @@ interface GithubAPI {
       @Query("order") order: String? = null, @Query("page") page: Int,
       @Query("per_page") perPage: Int
    ): Call<GithubRepositoriesData>
-
-   @GET
-   @Headers("accept: application/vnd.github.v3+json")
-   fun searchRepositoriesByUrl(@Url url: String): Call<GithubRepositoriesData>
 }

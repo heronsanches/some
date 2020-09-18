@@ -2,9 +2,9 @@
    <!-- Base application theme. -->
    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
       <!-- toolbar app -->
-      <item name="colorPrimary">@color/colorgithub</item>
+      <item name="colorPrimary">@color/colorGithub</item>
       <!-- toolbar Android OS -->
-      <item name="colorPrimaryDark">@color/colorgithub</item>
+      <item name="colorPrimaryDark">@color/colorGithub</item>
       <item name="colorAccent">@color/colorAccent</item>
       <item name="android:textViewStyle">@style/MyTextViewFontDefault</item>
       <!-- text color toolbar app-->

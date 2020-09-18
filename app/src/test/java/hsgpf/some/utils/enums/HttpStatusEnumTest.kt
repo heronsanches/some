@@ -1,6 +1,5 @@
 package hsgpf.some.utils.enums
 
-import hsgpf.some.utils.enums.HttpStatusEnum
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.MatcherAssert.assertThat
 import org.junit.Test

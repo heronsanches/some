@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import hsgpf.some.model.datasource.remote.exceptions.GithubExceptions
 import hsgpf.some.model.datasource.remote.exceptions.headerNotFound
 import hsgpf.some.model.datasource.remote.github.GithubRemoteDataS
+import hsgpf.some.model.datasource.remote.retrofit.RetrofitUtilsData
 import hsgpf.some.model.datasource.remote.retrofit.api.GithubAPI
 import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoriesData
 import hsgpf.some.model.datasource.remote.retrofit.retrofitApiFactory
@@ -37,10 +38,11 @@ class GithubRemoteDataSTest {
       url =
          "${mockWebServer.url("/")}search/repositories?q=language%3Akotlin&sort=stars&page=2&order=desc"
 
-      val githubApi = retrofitApiFactory(
+      val retrofitUtilsData = RetrofitUtilsData(
          baseUrl = mockWebServer.url("/").toString(), clazz = GithubAPI::class.java,
          application = ApplicationProvider.getApplicationContext()
       )
+      val githubApi = retrofitApiFactory(retrofitUtilsData)
       githubRemoteDataS = GithubRemoteDataS(githubApi)
    }
 
@@ -81,14 +83,8 @@ class GithubRemoteDataSTest {
                                             result: GithubRepositoriesData) {
       assertThat(result.items, `is`(bodyResponse.items))
       assertNull(result.exception)
-
-      assertThat(result.nextPageLink,
-                 `is`("https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars" +
-                      "&page=2&order=asc"))
-
-      assertThat(result.lastPageLink,
-                 `is`("https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars" +
-                      "&page=34&order=asc"))
+      assertThat(result.nextPage, `is`(2))
+      assertThat(result.actualPage, `is`(1))
    }
 
    @Test
@@ -104,7 +100,7 @@ class GithubRemoteDataSTest {
          resultsPerPage = 15
       )
       assertThat(result.exception is GithubExceptions, `is`(true))
-      assertThat(result.exception?.message, `is`(headerNotFound()))
+      assertThat(result.exception?.message, `is`(headerNotFound("link")))
    }
 
    @Test
@@ -123,45 +119,48 @@ class GithubRemoteDataSTest {
    }
 
    @Test
-   fun searchRepositoriesByUrl() {
-      val bodyResponse = prepareBodyResponseForSearch()
-      val headers = prepareHeadersForSearch()
+   fun searchRelLink() {
+      val prev =
+         """<https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars&order=desc
+               &page=1&per_page=15>; rel="prev""""
 
-      mockWebServer.enqueue(
-         mockServerResponse(HttpStatusEnum.OK, bodyResponse = Gson().toJson(bodyResponse), headers)
-      )
-      val result = githubRemoteDataS.searchRepositoriesByUrl(url)
-      assertSuccessfulSearchResult(bodyResponse, result)
+      val next =
+         """https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars&order=desc
+               &page=3&per_page=15>; rel="next""""
+
+      val last =
+         """https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars&order=desc
+               &page=67&per_page=15>; rel="last""""
+
+      val first =
+         """https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars&order=desc
+               &page=1&per_page=15>; rel="first""""
+      val links = listOf(prev, next, last, first)
+
+      // prev
+      var result = githubRemoteDataS.searchRelLink("prev", links)
+      assertThat(result, `is`(prev))
+
+      // next
+      result = githubRemoteDataS.searchRelLink("next", links)
+      assertThat(result, `is`(next))
+
+      // last
+      result = githubRemoteDataS.searchRelLink("last", links)
+      assertThat(result, `is`(last))
+
+      // first
+      result = githubRemoteDataS.searchRelLink("first", links)
+      assertThat(result, `is`(first))
    }
 
    @Test
-   fun searchRepositoriesByUrl_errorProcessingHeader() {
-      // the method must catch an error when processing the header"
-      val headers = Headers.headersOf("link", "<https://a")
-      mockWebServer.enqueue(
-         mockServerResponse(HttpStatusEnum.OK, bodyResponse = "{}", headers)
-      )
-      val result = githubRemoteDataS.searchRepositoriesByUrl(url)
-      assertNotNull(result.exception)
-   }
-
-   @Test
-   fun searchRepositoriesByUrl_headerNotFound() {
-      // the header name should be "link"
-      val headers = Headers.headersOf("linked", "<https://a")
-      mockWebServer.enqueue(
-         mockServerResponse(HttpStatusEnum.OK, bodyResponse = "{}", headers)
-      )
-      val result = githubRemoteDataS.searchRepositoriesByUrl(url)
-      assertThat(result.exception is GithubExceptions, `is`(true))
-      assertThat(result.exception?.message, `is`(headerNotFound()))
-   }
-
-   @Test
-   fun removeFirstCharacter() {
-      val toRemove = "<https://api.github.com/search/repositories?q=language%3Akotlin&so"
-      val result = githubRemoteDataS.removeFirstCharacter(toRemove)
-      assertThat(result, `is`("https://api.github.com/search/repositories?q=language%3Akotlin&so"))
+   fun getPageNumber() {
+      val pageLinkUrl =
+         """https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars&order=desc
+               &page=3&per_page=15>; rel="next""""
+      val result = githubRemoteDataS.getPageNumber(pageLinkUrl)
+      assertThat(result, `is`(3))
    }
 
    private fun <T> bodyResponse(jsonPath: String, clazz: Class<T>): T {

@@ -3,6 +3,7 @@ package hsgpf.some.model.datasource.remote.github
 import androidx.annotation.VisibleForTesting
 import hsgpf.some.model.datasource.remote.exceptions.GithubExceptions
 import hsgpf.some.model.datasource.remote.exceptions.headerNotFound
+import hsgpf.some.model.datasource.remote.exceptions.headerPropertyNotFound
 import hsgpf.some.model.datasource.remote.retrofit.api.GithubAPI
 import hsgpf.some.model.datasource.remote.retrofit.data.ResponseData
 import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoriesData
@@ -18,7 +19,7 @@ class GithubRemoteDataS(private val githubAPI: GithubAPI) : GithubRemoteDataSour
             q = query, sort = sort, order = order, page = page, perPage = resultsPerPage
          ).execute()
          formatResponse(processResponse(response))
-      } catch (e: Exception) {
+      } catch (e: Throwable) {
          GithubRepositoriesData(exception = e)
       }
    }
@@ -27,29 +28,30 @@ class GithubRemoteDataS(private val githubAPI: GithubAPI) : GithubRemoteDataSour
       processResponse: ResponseData<GithubRepositoriesData>
    ): GithubRepositoriesData {
       return processResponse.headers["link"]?.run {
-         val linkProcessing = split(Regex(">;\\s*rel=\"next\","))
-         val nextPage = removeFirstCharacter(linkProcessing[0])
+         val links = split(",")
+         val nextPageLink = searchRelLink("next", links)
+         val nextPage = getPageNumber(nextPageLink)
 
-         val lastPage =
-            removeFirstCharacter(linkProcessing[1].split(Regex(">;\\s*rel=\"last\""))[0])
+         val beforePage =
+            if (nextPage > 1) nextPage - 1
+            else nextPage
 
          val repositories = processResponse.payload?.apply {
-            nextPageLink = nextPage
-            lastPageLink = lastPage
+            this.actualPage = beforePage
+            this.nextPage = nextPage
          }
          repositories
-      } ?: throw GithubExceptions(headerNotFound())
-   }
-
-   override fun searchRepositoriesByUrl(url: String): GithubRepositoriesData {
-      return try {
-         val response = githubAPI.searchRepositoriesByUrl(url = url).execute()
-         return formatResponse(processResponse(response))
-      } catch (e: Exception) {
-         GithubRepositoriesData(exception = e)
-      }
+      } ?: throw GithubExceptions(headerNotFound("link"))
    }
 
    @VisibleForTesting
-   fun removeFirstCharacter(text: String) = text.removeRange(0, 1)
+   fun searchRelLink(rel: String, links: List<String>): String {
+      return links.find { it.contains("rel=\"$rel\"") }
+             ?: throw GithubExceptions(headerPropertyNotFound(headerName = "link", "rel=$rel"))
+   }
+
+   @VisibleForTesting
+   fun getPageNumber(pageLinkUrl: String): Int {
+      return pageLinkUrl.split(Regex("&page="))[1].split("&")[0].toInt()
+   }
 }

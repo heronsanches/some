@@ -28,13 +28,4 @@ class GithubRemoteRTest {
       val result = githubRemoteR.searchRepositories("query", "sort", "order", 1, 15)
       assertThat(result, `is`(outputData))
    }
-
-   @Test
-   fun searchRepositoriesByUrl() {
-      val url =
-         "https://api.github.com/search/repositories?q=language%3Akotlin&sort=stars&page=2&order=desc"
-      val outputData = GithubRepositoriesData()
-      `when`(githubRemoteDataSource.searchRepositoriesByUrl(url)).thenReturn(outputData)
-      assertThat(githubRemoteR.searchRepositoriesByUrl(url), `is`(outputData))
-   }
 }
