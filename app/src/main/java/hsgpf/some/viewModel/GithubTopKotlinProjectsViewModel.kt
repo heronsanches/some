@@ -15,16 +15,21 @@ class GithubTopKotlinProjectsViewModel(
    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseViewModel() {
    private val repositories = MutableLiveData<GithubRepositoriesData>()
+   private val loadingRepositories = MutableLiveData<Boolean>()
 
    fun repositories(): LiveData<GithubRepositoriesData> = repositories
+   fun loadingRepositories(): LiveData<Boolean> = loadingRepositories
 
    fun searchRepositories(page: Int) {
+      loadingRepositories.value = true
+
       launch {
          repositories.value = withContext(dispatcher) {
             githubRemoteRepository.searchRepositories(
                "language:kotlin", "stars", "desc", page, PAGINATION_SIZE
             )
          }
+         loadingRepositories.value = false
       }
    }
 }

@@ -35,19 +35,28 @@ class GithubTopKotlinProjectsViewModelTest {
    @Test
    fun searchRepositories() = runBlockingTest {
       checkInitialLiveDataValues()
-
-      // must has a non null [GithubRepositoriesData] value
       val expected = GithubRepositoriesData()
+
       `when`(githubRemoteRepository.searchRepositories("language:kotlin", "stars", "desc", 1, 15))
          .thenReturn(expected)
       githubTopKotlinProjectsViewModel.searchRepositories(1)
+
+      // loading repositories
+      assertThat(githubTopKotlinProjectsViewModel.loadingRepositories().getOrAwaitValue(),
+                 `is`(true))
+      mainTestCoroutineDispatcherRule.resume()
+
+      // must has [expected] [GithubRepositoriesData] value
       assertThat(githubTopKotlinProjectsViewModel.repositories().getOrAwaitValue(), `is`(expected))
+
+      // should finished loading repositories
+      assertThat(githubTopKotlinProjectsViewModel.loadingRepositories().getOrAwaitValue(),
+                 `is`(false))
    }
 
    private fun checkInitialLiveDataValues() {
-      // must has a null [GithubRepositoriesData] value when start view model
       mainTestCoroutineDispatcherRule.pause()
       assertNull(githubTopKotlinProjectsViewModel.repositories().value)
-      mainTestCoroutineDispatcherRule.resume()
+      assertNull(githubTopKotlinProjectsViewModel.loadingRepositories().value)
    }
 }

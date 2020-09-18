@@ -1,6 +1,7 @@
 package hsgpf.some.view.activity.helper
 
 import android.os.Bundle
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import hsgpf.some.R
@@ -43,9 +44,18 @@ class GithubTopKotlinProjectsActivityHelper(
          binding.rvRepositories.adapter = githubTopKotlinProjectsAdapter
          binding.rvRepositories.addOnScrollListener(rvRepositoriesScrollListener)
          repositoriesObserver()
+         loadingRepositoriesObserver()
 
          if (githubTopKotlinProjectsViewModel.repositories().value == null)
             githubTopKotlinProjectsViewModel.searchRepositories(actualPage)
+      }
+   }
+
+   private fun loadingRepositoriesObserver() {
+      act.get()?.run {
+         githubTopKotlinProjectsViewModel.loadingRepositories().observe(this, { isLoading ->
+            binding.pb.isVisible = isLoading
+         })
       }
    }
 
