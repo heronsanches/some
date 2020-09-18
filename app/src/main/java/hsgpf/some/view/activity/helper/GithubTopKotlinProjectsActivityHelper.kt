@@ -1,5 +1,6 @@
 package hsgpf.some.view.activity.helper
 
+import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import hsgpf.some.R
@@ -14,8 +15,12 @@ class GithubTopKotlinProjectsActivityHelper(
    private val act: WeakReference<GithubTopKotlinProjectsActivity>
 ) {
    private lateinit var githubTopKotlinProjectsAdapter: GithubTopKotlinProjectsAdapter
-   private var nextPage: Int = 1
-   private var actualPage: Int = 1
+   var nextPage: Int = 1
+      private set
+
+   var actualPage: Int = 1
+      private set
+
    private var scrollingUp = false
 
    fun initializeToolbar() {
@@ -24,8 +29,14 @@ class GithubTopKotlinProjectsActivityHelper(
       }
    }
 
-   fun setupGithubTopKotlinProjectsList() {
+   fun setupGithubTopKotlinProjectsList(savedInstanceState: Bundle?) {
+
       act.get()?.run {
+         savedInstanceState?.run {
+            nextPage = savedInstanceState.getInt(SAVED_NEXT_PAGE, 1)
+            actualPage = savedInstanceState.getInt(SAVED_ACTUAL_PAGE, 1)
+         }
+
          repositoriesObserver()
          githubTopKotlinProjectsAdapter = GithubTopKotlinProjectsAdapter()
          binding.rvRepositories.layoutManager = LinearLayoutManager(this)
@@ -33,7 +44,7 @@ class GithubTopKotlinProjectsActivityHelper(
          binding.rvRepositories.addOnScrollListener(rvRepositoriesScrollListener)
 
          if (githubTopKotlinProjectsViewModel.repositories().value == null)
-            githubTopKotlinProjectsViewModel.searchRepositories(1)
+            githubTopKotlinProjectsViewModel.searchRepositories(actualPage)
       }
    }
 
