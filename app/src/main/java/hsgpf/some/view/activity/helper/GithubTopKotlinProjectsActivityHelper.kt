@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import hsgpf.some.R
-import hsgpf.some.model.datasource.remote.retrofit.api.PAGINATION_SIZE
 import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoriesData
 import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoryData
 import hsgpf.some.view.activity.GithubTopKotlinProjectsActivity
@@ -15,6 +14,8 @@ class GithubTopKotlinProjectsActivityHelper(
    private val act: WeakReference<GithubTopKotlinProjectsActivity>
 ) {
    private lateinit var githubTopKotlinProjectsAdapter: GithubTopKotlinProjectsAdapter
+   private lateinit var linearLayoutManager: LinearLayoutManager
+
    var nextPage: Int = 1
       private set
 
@@ -36,12 +37,12 @@ class GithubTopKotlinProjectsActivityHelper(
             nextPage = savedInstanceState.getInt(SAVED_NEXT_PAGE, 1)
             actualPage = savedInstanceState.getInt(SAVED_ACTUAL_PAGE, 1)
          }
-
-         repositoriesObserver()
+         linearLayoutManager = LinearLayoutManager(this)
          githubTopKotlinProjectsAdapter = GithubTopKotlinProjectsAdapter()
-         binding.rvRepositories.layoutManager = LinearLayoutManager(this)
+         binding.rvRepositories.layoutManager = linearLayoutManager
          binding.rvRepositories.adapter = githubTopKotlinProjectsAdapter
          binding.rvRepositories.addOnScrollListener(rvRepositoriesScrollListener)
+         repositoriesObserver()
 
          if (githubTopKotlinProjectsViewModel.repositories().value == null)
             githubTopKotlinProjectsViewModel.searchRepositories(actualPage)
@@ -76,36 +77,30 @@ class GithubTopKotlinProjectsActivityHelper(
             val infiniteList = mutableListOf<GithubRepositoryData>()
 
             if (scrollingUp) defineScrollUpInfiniteList(repositories, infiniteList)
-            else defineScrollDownInfiniteList(repositories, infiniteList)
+            else {
+               if (actualPage > 1) defineScrollDownInfiniteList(repositories, infiniteList)
+               else infiniteList.addAll(repositories.items)
+            }
             githubTopKotlinProjectsAdapter.submitList(infiniteList)
          })
       }
    }
 
+   private fun addVisibleItems(infiniteList: MutableList<GithubRepositoryData>) {
+      val startIndex = linearLayoutManager.findFirstCompletelyVisibleItemPosition()
+      val endIndex = linearLayoutManager.findLastCompletelyVisibleItemPosition() + 1
+      infiniteList.addAll(githubTopKotlinProjectsAdapter.currentList.subList(startIndex, endIndex))
+   }
+
    private fun defineScrollUpInfiniteList(repositories: GithubRepositoriesData,
                                           infiniteList: MutableList<GithubRepositoryData>) {
       infiniteList.addAll(repositories.items)
-
-      val endIndex =
-         if (githubTopKotlinProjectsAdapter.itemCount >= PAGINATION_SIZE) PAGINATION_SIZE
-         else githubTopKotlinProjectsAdapter.itemCount
-
-      infiniteList.addAll(
-         githubTopKotlinProjectsAdapter.currentList.subList(0, endIndex)
-      )
+      addVisibleItems(infiniteList)
    }
 
    private fun defineScrollDownInfiniteList(repositories: GithubRepositoriesData,
                                             infiniteList: MutableList<GithubRepositoryData>) {
-      val initialIndex =
-         if (githubTopKotlinProjectsAdapter.itemCount > PAGINATION_SIZE) PAGINATION_SIZE
-         else 0
-
-      infiniteList.addAll(
-         githubTopKotlinProjectsAdapter.currentList.subList(
-            initialIndex, githubTopKotlinProjectsAdapter.itemCount
-         )
-      )
+      addVisibleItems(infiniteList)
       infiniteList.addAll(repositories.items)
    }
 }
