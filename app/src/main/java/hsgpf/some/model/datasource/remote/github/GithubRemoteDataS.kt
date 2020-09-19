@@ -32,13 +32,18 @@ class GithubRemoteDataS(private val githubAPI: GithubAPI) : GithubRemoteDataSour
          val nextPageLink = searchRelLink("next", links)
          val nextPage = getPageNumber(nextPageLink)
 
-         val beforePage =
+         val actualPage =
             if (nextPage > 1) nextPage - 1
             else nextPage
 
+         val beforePage: Int? =
+            if (actualPage > 1) actualPage - 1
+            else null
+
          val repositories = processResponse.payload?.apply {
-            this.actualPage = beforePage
+            this.actualPage = actualPage
             this.nextPage = nextPage
+            this.beforePage = beforePage
          }
          repositories
       } ?: throw GithubExceptions(headerNotFound("link"))

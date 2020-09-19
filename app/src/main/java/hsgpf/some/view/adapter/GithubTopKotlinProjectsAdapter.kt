@@ -2,14 +2,14 @@ package hsgpf.some.view.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import hsgpf.some.databinding.ItemGithubRepositoryBinding
 import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoryData
 
 class GithubTopKotlinProjectsAdapter
-   : ListAdapter<GithubRepositoryData, GithubTopKotlinProjectsAdapter.VH>(diffCallBack) {
+   : PagedListAdapter<GithubRepositoryData, GithubTopKotlinProjectsAdapter.VH>(diffCallBack) {
 
    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
       val item =
@@ -18,7 +18,7 @@ class GithubTopKotlinProjectsAdapter
    }
 
    override fun onBindViewHolder(holder: VH, position: Int) {
-      holder.item.repository = currentList[position]
+      holder.item.repository = getItem(position)
    }
 
    class VH(val item: ItemGithubRepositoryBinding) : RecyclerView.ViewHolder(item.root)
