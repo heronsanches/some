@@ -4,7 +4,7 @@ package hsgpf.some.di
 
 import hsgpf.some.model.datasource.remote.github.GithubRemoteDataS
 import hsgpf.some.model.datasource.remote.github.GithubRemoteDataSource
-import hsgpf.some.model.datasource.remote.github.GithubRemotePagedDataSource
+import hsgpf.some.model.datasource.remote.github.GithubRemotePagingSource
 import hsgpf.some.model.datasource.remote.retrofit.RetrofitUtilsData
 import hsgpf.some.model.datasource.remote.retrofit.api.BASE_URL_GITHUB_API
 import hsgpf.some.model.datasource.remote.retrofit.api.CACHE_NAME_GITHUB_API
@@ -22,5 +22,5 @@ val remoteDataSourceModule = module {
       )
       GithubRemoteDataS(retrofitApiFactory(retrofitUtilsData)) as GithubRemoteDataSource
    }
-   factory { GithubRemotePagedDataSource(githubRemoteDataSource = get()) }
+   factory { GithubRemotePagingSource(githubRemoteDataSource = get()) }
 }

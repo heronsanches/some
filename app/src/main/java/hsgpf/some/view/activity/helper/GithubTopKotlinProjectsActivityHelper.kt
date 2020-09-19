@@ -1,9 +1,14 @@
 package hsgpf.some.view.activity.helper
 
+import androidx.core.view.isVisible
+import androidx.lifecycle.lifecycleScope
+import androidx.paging.LoadState
 import androidx.recyclerview.widget.LinearLayoutManager
 import hsgpf.some.R
 import hsgpf.some.view.activity.GithubTopKotlinProjectsActivity
 import hsgpf.some.view.adapter.GithubTopKotlinProjectsAdapter
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.lang.ref.WeakReference
 
 class GithubTopKotlinProjectsActivityHelper(
@@ -23,14 +28,30 @@ class GithubTopKotlinProjectsActivityHelper(
          binding.rvRepositories.layoutManager = LinearLayoutManager(this)
          binding.rvRepositories.adapter = githubTopKotlinProjectsAdapter
          repositoriesObserver()
+         repositoriesErrorObserver()
       }
    }
 
    private fun repositoriesObserver() {
       act.get()?.run {
-         githubViewModel.repositories.observe(this, { repositories ->
-            githubTopKotlinProjectsAdapter.submitList(repositories)
-         })
+         lifecycleScope.launch {
+            githubViewModel.repositories.collectLatest { pagingData ->
+               githubTopKotlinProjectsAdapter.submitData(pagingData)
+            }
+         }
+      }
+   }
+
+   private fun repositoriesErrorObserver() {
+      act.get()?.run {
+         lifecycleScope.launch {
+            githubTopKotlinProjectsAdapter.loadStateFlow.collectLatest { loadStates ->
+               binding.pb.isVisible = when (loadStates.refresh) {
+                  LoadState.Loading -> true
+                  !is LoadState.Loading -> false
+               }
+            }
+         }
       }
    }
 }
