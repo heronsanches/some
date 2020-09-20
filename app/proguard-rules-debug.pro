@@ -16,3 +16,5 @@
 -keep class org.koin** { * ; }
 -keep class kotlin.collections** { * ; }
 -keep class kotlin.coroutines.intrinsics** { * ; }
+-keep class kotlin.ranges.RangesKt
+-keep class kotlin.text.StringsKt

@@ -11,7 +11,7 @@ android {
         applicationId "hsgpf.some"
         minSdkVersion 23
         targetSdkVersion 29
-        versionCode 1
+        versionCode 2
         versionName "1.0.2"
         testInstrumentationRunner "hsgpf.some.CustomTestInstrumentationRunner"
 
@@ -43,12 +43,6 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    sourceSets {
-        test {
-            java.srcDirs += 'src/sharedTest/java'
         }
     }
 }
@@ -87,6 +81,7 @@ dependencies {
     testImplementation "org.mockito:mockito-inline:$test_mockito_version"
     testImplementation "org.robolectric:robolectric:$test_roboletric_version"
 
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:$test_espresso_version"
     androidTestImplementation "androidx.test.espresso:espresso-core:$test_espresso_version"
     androidTestImplementation "androidx.test.ext:junit:$test_ext_junit_version"
     androidTestImplementation "androidx.test:runner:$test_runner_version"

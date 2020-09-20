@@ -8,8 +8,10 @@ import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoryData
 import hsgpf.some.utility.datasource.GithubFakePagingSource
+import hsgpf.some.utility.idlingresource.monitorActivity
 import hsgpf.some.utility.rule.DatabindingIdlingRule
 import hsgpf.some.utility.rule.KoinRule
+import hsgpf.some.view.robot.githubtopkotlinprojects.githubTopKotlinProjectsScreen
 import org.junit.After
 import org.junit.Rule
 import org.junit.Test
@@ -42,8 +44,16 @@ class GithubTopKotlinProjectsActivityTest : KoinTest {
    }
 
    @Test
-   fun initialLoad() { // TODO:
+   fun topKotlinRepositoriesScreen() {
       loadKoinModules(remoteDataSourceModule)
       defineActivityAndScenario()
+      dataBindingIdlingRule.resource.monitorActivity(scenario!!)
+
+      githubTopKotlinProjectsScreen {
+         verifyToolbarTitle(activity!!)
+         verifyInitialListSize()
+         verifySomeItemsContents()
+         verifyIfListSizeExceedsTheMaximumAllowedAfterScrolls()
+      }
    }
 }

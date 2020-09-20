@@ -6,7 +6,7 @@ import org.junit.rules.TestWatcher
 import org.junit.runner.Description
 
 class DatabindingIdlingRule : TestWatcher() {
-   private val resource = DataBindingIdlingResource()
+   val resource = DataBindingIdlingResource()
 
    override fun starting(description: Description?) {
       super.starting(description)
