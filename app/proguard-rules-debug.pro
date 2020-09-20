@@ -10,3 +10,11 @@
 ##########################
 -keep class hsgpf.some** { *; }
 -keep public class * extends java.lang.Exception # Keep custom exceptions.
+
+########################## Test application ##########################
+-keep class androidx.test** { * ; }
+-keep class org.koin** { * ; }
+-keep class kotlin.collections** { * ; }
+-keep class kotlin.coroutines.intrinsics** { * ; }
+-keep class kotlin.ranges.RangesKt
+-keep class kotlin.text.StringsKt

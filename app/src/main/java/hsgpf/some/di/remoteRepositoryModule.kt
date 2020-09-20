@@ -7,5 +7,5 @@ import hsgpf.some.model.repository.remote.github.GithubRemoteRepository
 import org.koin.dsl.module
 
 val remoteRepositoryModule = module {
-   factory { GithubRemoteR(githubRemoteDataSource = get()) as GithubRemoteRepository }
+   factory { GithubRemoteR(githubRemotePagingSource = get()) as GithubRemoteRepository }
 }

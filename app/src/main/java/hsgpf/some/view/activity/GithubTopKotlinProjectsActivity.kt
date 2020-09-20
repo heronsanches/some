@@ -24,9 +24,4 @@ class GithubTopKotlinProjectsActivity : AppCompatActivity() {
       helper.initializeToolbar()
       helper.setupGithubTopKotlinProjectsList()
    }
-
-   override fun onSaveInstanceState(outState: Bundle) {
-      githubViewModel.onSavedInstance = true
-      super.onSaveInstanceState(outState)
-   }
 }

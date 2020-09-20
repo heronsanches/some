@@ -85,6 +85,7 @@ class GithubRemoteDataSTest {
       assertNull(result.exception)
       assertThat(result.nextPage, `is`(2))
       assertThat(result.actualPage, `is`(1))
+      assertNull(result.beforePage)
    }
 
    @Test
