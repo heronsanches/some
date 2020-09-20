@@ -2,6 +2,7 @@
 
 package hsgpf.some.di
 
+import androidx.paging.PagingSource
 import hsgpf.some.model.datasource.remote.github.GithubRemoteDataS
 import hsgpf.some.model.datasource.remote.github.GithubRemoteDataSource
 import hsgpf.some.model.datasource.remote.github.GithubRemotePagingSource
@@ -9,6 +10,7 @@ import hsgpf.some.model.datasource.remote.retrofit.RetrofitUtilsData
 import hsgpf.some.model.datasource.remote.retrofit.api.BASE_URL_GITHUB_API
 import hsgpf.some.model.datasource.remote.retrofit.api.CACHE_NAME_GITHUB_API
 import hsgpf.some.model.datasource.remote.retrofit.api.GithubAPI
+import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoryData
 import hsgpf.some.model.datasource.remote.retrofit.retrofitApiFactory
 import org.koin.dsl.module
 
@@ -22,5 +24,9 @@ val remoteDataSourceModule = module {
       )
       GithubRemoteDataS(retrofitApiFactory(retrofitUtilsData)) as GithubRemoteDataSource
    }
-   factory { GithubRemotePagingSource(githubRemoteDataSource = get()) }
+
+   factory {
+      GithubRemotePagingSource(githubRemoteDataSource = get())
+         as PagingSource<Int, GithubRepositoryData>
+   }
 }

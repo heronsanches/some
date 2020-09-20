@@ -3,6 +3,7 @@ package hsgpf.some.view.activity.helper
 import androidx.core.view.isVisible
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
+import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import hsgpf.some.R
 import hsgpf.some.view.activity.GithubTopKotlinProjectsActivity
@@ -26,6 +27,10 @@ class GithubTopKotlinProjectsActivityHelper(
       act.get()?.run {
          githubTopKotlinProjectsAdapter = GithubTopKotlinProjectsAdapter()
          binding.rvRepositories.layoutManager = LinearLayoutManager(this)
+
+         binding.rvRepositories.addItemDecoration(
+            DividerItemDecoration(this, LinearLayoutManager.VERTICAL)
+         )
          binding.rvRepositories.adapter = githubTopKotlinProjectsAdapter
          repositoriesObserver()
          repositoriesErrorObserver()
@@ -35,7 +40,7 @@ class GithubTopKotlinProjectsActivityHelper(
    private fun repositoriesObserver() {
       act.get()?.run {
          lifecycleScope.launch {
-            githubViewModel.repositories.collectLatest { pagingData ->
+            githubViewModel.repositoriesFlow.collectLatest { pagingData ->
                githubTopKotlinProjectsAdapter.submitData(pagingData)
             }
          }

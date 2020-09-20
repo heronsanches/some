@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorAccent">#4b4550</color>
-    <color name="colorGray900">#212121</color>
-    <color name="colorWhite">#FFFFFF</color>
-    <color name="colorGithub">#24292e</color>
+    <color name="accent">#4b4550</color>
+    <color name="gray900">#212121</color>
+    <color name="white">#FFFFFF</color>
+    <color name="github">#24292e</color>
 </resources>

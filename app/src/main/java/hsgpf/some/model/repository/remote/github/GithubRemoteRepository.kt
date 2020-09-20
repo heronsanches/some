@@ -1,7 +1,9 @@
 package hsgpf.some.model.repository.remote.github
 
-import hsgpf.some.model.datasource.remote.github.GithubRemotePagingSource
+import androidx.paging.PagingData
+import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoryData
+import kotlinx.coroutines.flow.Flow
 
 interface GithubRemoteRepository {
-   val repositoriesPagingSource: GithubRemotePagingSource
+   fun repositoriesFlow(): Flow<PagingData<GithubRepositoryData>>
 }

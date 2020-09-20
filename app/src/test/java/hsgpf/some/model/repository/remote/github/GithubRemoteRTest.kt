@@ -1,21 +1,18 @@
 package hsgpf.some.model.repository.remote.github
 
+import androidx.paging.PagingSource
 import hsgpf.some.model.datasource.remote.github.GithubRemotePagingSource
-import org.junit.Before
+import hsgpf.some.model.datasource.remote.retrofit.data.github.GithubRepositoryData
+import org.junit.Test
 import org.mockito.Mockito.mock
 
 class GithubRemoteRTest {
    private lateinit var githubRemoteR: GithubRemoteR
-   private lateinit var githubRemotePagingSource: GithubRemotePagingSource
+   private lateinit var githubRemotePagingSource: PagingSource<Int, GithubRepositoryData>
 
-   @Before
-   fun setup() {
+   @Test
+   fun sanityTest() {
       githubRemotePagingSource = mock(GithubRemotePagingSource::class.java)
       githubRemoteR = GithubRemoteR(githubRemotePagingSource)
    }
-
-   /*@Test TODO:
-   fun pagedRepositories() {
-
-   }*/
 }
