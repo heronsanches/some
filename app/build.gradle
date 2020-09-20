@@ -12,8 +12,8 @@ android {
         minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
-        versionName "1.0.1"
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        versionName "1.0.2"
+        testInstrumentationRunner "hsgpf.some.CustomTestInstrumentationRunner"
 
         compileOptions {
             sourceCompatibility JavaVersion.VERSION_1_8
@@ -36,7 +36,7 @@ android {
             minifyEnabled true
             shrinkResources true
             versionNameSuffix '-debug'
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules-debug.pro'
         }
 
         release {
@@ -76,6 +76,7 @@ dependencies {
 
     // for testing
     debugImplementation "androidx.test:core:$test_androidx_core"
+    debugImplementation "androidx.test.espresso:espresso-idling-resource:$test_espresso_version"
 
     testImplementation "androidx.arch.core:core-testing:$test_arch_core_testing"
     testImplementation "androidx.test.ext:junit:$test_ext_junit_version"
@@ -85,4 +86,10 @@ dependencies {
     testImplementation "org.mockito:mockito-core:$test_mockito_version"
     testImplementation "org.mockito:mockito-inline:$test_mockito_version"
     testImplementation "org.robolectric:robolectric:$test_roboletric_version"
+
+    androidTestImplementation "androidx.test.espresso:espresso-core:$test_espresso_version"
+    androidTestImplementation "androidx.test.ext:junit:$test_ext_junit_version"
+    androidTestImplementation "androidx.test:runner:$test_runner_version"
+    androidTestImplementation "androidx.test.uiautomator:uiautomator:$test_uiautomator_version"
+    androidTestImplementation "org.koin:koin-test:$koin_version"
 }
